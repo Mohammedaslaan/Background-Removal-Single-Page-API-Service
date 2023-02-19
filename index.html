@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="max-w-[1200px] flex mx-auto justify-between items-center">
+
+    <form id="form" class="flex relative flex-col border border-red-900 min-h-[600px] 
+    min-w-[400px]">
+      <div>
+        <img id="showUploadImage" src="" alt="" class="absolute top-0 left-0 
+        right-0 bottom-2 object-cover ">
+      </div>
+      <div class="absolute bottom-1 flex flex-col gap-5">
+        <input type="file" id="imgFile" class="mx-auto">
+        <button type="submit"
+        class="bg-blue-500 text-white w-40 font-mullish font-semibold rounded-md
+        hover:bg-lightBlue500 transition-all duration-200 py-3 px-2">Upload Image</button>
+      </div>
+        
+    </form>
+    <div>
+      <h3 id="loadingText">Loading Image... Please Wait For 30 sec.</h3>
+    </div>
+    <div class="flex relative flex-col border border-red-900 min-h-[600px] 
+    min-w-[400px] ">
+      <img class="absolute"
+       src="" alt="" id="removebgimg" width="300">
+    </div>
+    
+    </div>
+    
+
+    <script>
+        let formMain=document.getElementById('form')
+        let imgFile=document.getElementById('imgFile')
+        let loadingText=document.getElementById('loadingText')
+        loadingText.style.display='none'
+        let imgPath=''
+        let removebgimg=document.getElementById('removebgimg')
+        let showUploadImage = document.getElementById('showUploadImage');
+
+        imgFile.addEventListener('input',(e)=>{
+            imgPath=e.target.files[0]
+            console.log(imgPath)
+            removebgimg.src=''
+            showUploadImage.src = URL.createObjectURL(e.target.files[0]);
+        })
+
+
+
+
+        
+
+
+
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+        loadingText.style.display='block'
+
+            const form = new FormData()
+form.append('image_file', imgPath)
+
+fetch('https://clipdrop-api.co/remove-background/v1', {
+  method: 'POST',
+  headers: {
+    'x-api-key': '602b3b46c02f53d806a6f86dd0b73c2f77f30d2839bcb6eef9757bbf9f778b03c0dbb9ac71462c3dd5f1d8059542d4e7',
+  },
+  body: form,
+})
+  .then(response => response.arrayBuffer())
+  .then(buffer => {
+    console.log(buffer,'Hello')
+    loadingText.style.display='none'
+
+
+    let arrayBufferView = new Uint8Array(buffer);
+    var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+    var imageUrl = URL.createObjectURL( blob );
+    console.log(imageUrl)
+    removebgimg.src=imageUrl
+    // buffer here is a binary representation of the returned image
+  }).catch(error=>console.log(error))
+        })
+    </script>
+    
+</body>
+</html>
